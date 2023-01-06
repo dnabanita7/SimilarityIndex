@@ -1,0 +1,15 @@
+cmake
+Pillow
+proglog
+requests
+tqdm
+urllib3
+wincertstore
+idna
+imageio
+imageio-ffmpeg
+moviepy
+certifi
+chardet
+click
+decorator
