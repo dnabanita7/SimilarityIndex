@@ -11,7 +11,7 @@ face-recognition-models
 idna
 imageio
 imageio-ffmpeg
-moviepy
+moviepy==5.0
 numpy
 Pillow
 proglog
