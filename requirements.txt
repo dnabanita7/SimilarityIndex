@@ -1,4 +1,19 @@
-flask
+cmake, priority
+Pillow, priority
+proglog, priority
+requests, priority
+tqdm, priority
+urllib3, priority
+wincertstore, priority
+idna, priority
+imageio, priority
+imageio-ffmpeg, priority
+moviepy, priority
+certifi, priority
+chardet, priority
+click, priority
+decorator, priority
+flask, priority
 opencv-python
 face-recognition
 face-recognition-models
