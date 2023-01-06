@@ -1,11 +1,10 @@
+cmake
 flask
 opencv-python
 certifi
 chardet
 click
-cmake
 decorator
-dlib
 face-recognition
 face-recognition-models
 idna
@@ -19,3 +18,4 @@ requests
 tqdm
 urllib3
 wincertstore
+dlib
