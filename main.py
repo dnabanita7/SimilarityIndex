@@ -28,6 +28,10 @@ face_locations = []
 face_encodings = []
 face_names = []
 percentage_similarities = []
+second_face_names = []
+second_percentage_similarities = []
+third_face_names = []
+third_percentage_similarities = []
 process_this_frame = True
 
 while True:
@@ -57,6 +61,10 @@ while True:
 
         face_names = []
         percentage_similarities = []
+        second_face_names = []
+        second_percentage_similarities = []
+        third_face_names = []
+        third_percentage_similarities = []
         for face_encoding in face_encodings:
 
             # See if the face is a match for the known face(s)
@@ -76,23 +84,29 @@ while True:
             similarity = 100 / (1 + face_distances[best_match_index])
             face_names.append(name)
             percentage_similarities.append(similarity)
+            # add the second face
             face_distances = np.delete(face_distances, best_match_index)
             second_best_match_index = np.argmin(face_distances)
             second_best_name = students_names[second_best_match_index]
             second_similarity = 100 / (1 + face_distances[second_best_match_index])
+            second_face_names.append(second_best_name)
+            second_percentage_similarities.append(second_similarity)
+            # add the third face
             face_distances = np.delete(face_distances, second_best_match_index)
             third_best_match_index = np.argmin(face_distances)
             third_best_name = students_names[third_best_match_index]
             third_similarity = 100 / (1 + face_distances[third_best_match_index])
+            third_face_names.append(third_best_name)
+            third_percentage_similarities.append(third_similarity)
     process_this_frame = not process_this_frame
 
     # Display the results
 
-    for ((top, right, bottom, left), name, percent) in zip(
-        face_locations, face_names, percentage_similarities
+    for ((top, right, bottom, left), name, second_name, third_name, percent, second_percent, third_percent) in zip(
+        face_locations, face_names, second_face_names, third_face_names, percentage_similarities, second_percentage_similarities, third_percentage_similarities 
     ):
-        text2 = second_best_name + " with " + str(round(second_similarity, 2)) + "%"
-        text3 = third_best_name + " with " + str(round(third_similarity, 2)) + "%"
+        text2 = second_name + " with " + str(round(second_percent, 2)) + "%"
+        text3 = third_name + " with " + str(round(third_percent, 2)) + "%"
 
         # Scale back up face locations since the frame we detected in was scaled to 1/4 size
 
