@@ -26,6 +26,7 @@ students_names = ['student' + str(i).zfill(2) for i in range(43)]
 face_locations = []
 face_encodings = []
 face_names = []
+percentage_similarities = []
 process_this_frame = True
 
 while True:
