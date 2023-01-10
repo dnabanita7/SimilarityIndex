@@ -102,8 +102,22 @@ while True:
 
     # Display the results
 
-    for ((top, right, bottom, left), name, second_name, third_name, percent, second_percent, third_percent) in zip(
-        face_locations, face_names, second_face_names, third_face_names, percentage_similarities, second_percentage_similarities, third_percentage_similarities 
+    for (
+        (top, right, bottom, left),
+        name,
+        second_name,
+        third_name,
+        percent,
+        second_percent,
+        third_percent,
+    ) in zip(
+        face_locations,
+        face_names,
+        second_face_names,
+        third_face_names,
+        percentage_similarities,
+        second_percentage_similarities,
+        third_percentage_similarities,
     ):
         text2 = second_name + " with " + str(round(second_percent, 2)) + "%"
         text3 = third_name + " with " + str(round(third_percent, 2)) + "%"
