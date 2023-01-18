@@ -4,7 +4,7 @@ import face_recognition
 import numpy as np
 
 app = Flask(__name__)
-camera = cv2.VideoCapture(0)
+video_capture = cv2.VideoCapture(0)
 
 # Load a second sample picture and learn how to recognize it.
 students_face_encodings = []
