@@ -33,7 +33,7 @@ process_this_frame = True
 i=0
 while i<5:
     # Get a reference to webcam #0 (the default one)
-
+    print(i)
     video_capture = cv2.VideoCapture(int(i))
 
     while True:
@@ -41,6 +41,9 @@ while i<5:
         # Grab a single frame of video
 
         (ret, frame) = video_capture.read()
+        print(ret)
+        print("______________________")
+        print(frame)
         if ret:
 
             # Resize frame of video to 1/4 size for faster face recognition processing

@@ -1,10 +1,11 @@
+#!/usr/bin/python
 from flask import Flask, render_template, Response
 import cv2
 import face_recognition
 import numpy as np
+from camera import Camera
 
 app = Flask(__name__)
-video_capture = cv2.VideoCapture(0)
 
 # Load a second sample picture and learn how to recognize it.
 students_face_encodings = []
@@ -28,13 +29,13 @@ third_face_names = []
 third_percentage_similarities = []
 process_this_frame = True
 
-def gen_frames():
+
+def gen(camera):
     while True:
-
-        # Grab a single frame of video
-
-        (ret, frame) = video_capture.read()
-
+        frame = camera.get_frame()
+         # Resize frame of video to 1/4 size for faster face recognition processing
+        frame = cv2.imdecode(np.frombuffer(frame, np.uint8), -1)
+     
         # Resize frame of video to 1/4 size for faster face recognition processing
 
         small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
@@ -150,10 +151,8 @@ def gen_frames():
                         1,
                     )
 
-                ret, buffer = cv2.imencode(".jpg", frame)
-                frame = buffer.tobytes()
-                yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + frame + b"\r\n")
-
+        frame = cv2.imencode('.jpg', frame)[1].tobytes()
+        yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -161,7 +160,9 @@ def index():
 
 @app.route("/video_feed")
 def video_feed():
-    return Response(gen_frames(), mimetype="multipart/x-mixed-replace; boundary=frame")
+    return Response(gen(Camera()), mimetype="multipart/x-mixed-replace; boundary=frame")
+
+    #return Response(gen_frames(), mimetype="multipart/x-mixed-replace; boundary=frame")
 
 
 if __name__ == "__main__":
