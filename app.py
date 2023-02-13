@@ -2,6 +2,7 @@
 from flask import Flask, render_template, Response
 import cv2
 import face_recognition
+import os
 import numpy as np
 from camera import Camera
 
@@ -11,7 +12,7 @@ app = Flask(__name__)
 students_face_encodings = []
 for i in range(43):
     content = face_recognition.load_image_file(
-        "portraits/students" + str(i).zfill(2) + ".png"
+        "static/Image/students" + str(i).zfill(2) + ".png"
     )
     student_face_encodings = face_recognition.face_encodings(content)[0]
     students_face_encodings.append(student_face_encodings)
@@ -153,10 +154,15 @@ def gen(camera):
 
         frame = cv2.imencode('.jpg', frame)[1].tobytes()
         yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+img = os.path.join('static', 'Image')
+
 @app.route("/")
 def index():
-    return render_template("index.html")
-
+    if len(face_names) != 0:
+        render_template("index.html", face=face_names[0])
+    files = [os.path.join(img, name) for name in os.listdir(img)]
+    return render_template("index.html", images=files)
 
 @app.route("/video_feed")
 def video_feed():

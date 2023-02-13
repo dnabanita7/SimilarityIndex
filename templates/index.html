@@ -4,10 +4,16 @@
 
   <body>
     <div class="container">
+        {% for name in images %}
+        <img src="{{ name }}" height=5% width="10%">
+        {% endfor %}
+</div>
+    <div class="container">
         <div class="row">
             <div class="col-lg-8  offset-lg-2">
                 <h3 class="mt-5">Live Streaming</h3>
                <img src="{{ url_for('video_feed') }}" width="50%">
+               <img src="{{ face }}" width="50%">
             </div>
         </div>
     </div>
