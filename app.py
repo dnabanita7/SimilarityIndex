@@ -3,6 +3,7 @@ from flask import Flask, render_template, Response
 import cv2
 import face_recognition
 import os
+from PIL import Image
 import numpy as np
 from camera import Camera
 
@@ -18,12 +19,13 @@ for i in range(43):
     students_face_encodings.append(student_face_encodings)
 
 # Create arrays of known face encodings and their names
-students_names = ["student" + str(i).zfill(2) for i in range(43)]
+students_names = ["students" + str(i).zfill(2) for i in range(43)]
 # Initialize some variables
 face_locations = []
 face_encodings = []
 faces = ""
 process_this_frame = True
+img = os.path.join('static', 'Image')
 
 
 def gen(camera):
@@ -90,9 +92,11 @@ def gen(camera):
                 third_similarity = 100 / (1 + face_distances[third_best_match_index])
                 third_face_names.append(third_best_name)
                 third_percentage_similarities.append(third_similarity)
-                faces = face_names[0]
-                with open('faces.txt', 'w') as f:
-                    f.write(faces)
+                faces = face_names[0] + ".png"
+                # creating a image object (main image) 
+                im1 = Image.open(os.path.join(img, faces))
+                # save a image using extension
+                im1 = im1.save("static/faces.png")
                 # Display the results
                 for (
                     (top, right, bottom, left),
@@ -152,8 +156,6 @@ def gen(camera):
             
         frame = cv2.imencode('.jpg', frame)[1].tobytes()
         yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-
-img = os.path.join('static', 'Image')
 
 @app.route("/")
 def index():
