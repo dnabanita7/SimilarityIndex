@@ -22,6 +22,7 @@ students_names = ["student" + str(i).zfill(2) for i in range(43)]
 # Initialize some variables
 face_locations = []
 face_encodings = []
+faces = ""
 process_this_frame = True
 
 
@@ -89,6 +90,9 @@ def gen(camera):
                 third_similarity = 100 / (1 + face_distances[third_best_match_index])
                 third_face_names.append(third_best_name)
                 third_percentage_similarities.append(third_similarity)
+                faces = face_names[0]
+                with open('faces.txt', 'w') as f:
+                    f.write(faces)
                 # Display the results
                 for (
                     (top, right, bottom, left),
@@ -145,7 +149,7 @@ def gen(camera):
                         (0xFF, 0xFF, 0),
                         1,
                     )
-
+            
         frame = cv2.imencode('.jpg', frame)[1].tobytes()
         yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
@@ -161,7 +165,6 @@ def video_feed():
     return Response(gen(Camera()), mimetype="multipart/x-mixed-replace; boundary=frame")
 
     #return Response(gen_frames(), mimetype="multipart/x-mixed-replace; boundary=frame")
-
 
 if __name__ == "__main__":
     app.run(debug=True)
