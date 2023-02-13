@@ -22,12 +22,6 @@ students_names = ["student" + str(i).zfill(2) for i in range(43)]
 # Initialize some variables
 face_locations = []
 face_encodings = []
-face_names = []
-percentage_similarities = []
-second_face_names = []
-second_percentage_similarities = []
-third_face_names = []
-third_percentage_similarities = []
 process_this_frame = True
 
 
@@ -159,8 +153,6 @@ img = os.path.join('static', 'Image')
 
 @app.route("/")
 def index():
-    if len(face_names) != 0:
-        render_template("index.html", face=face_names[0])
     files = [os.path.join(img, name) for name in os.listdir(img)]
     return render_template("index.html", images=files)
 
