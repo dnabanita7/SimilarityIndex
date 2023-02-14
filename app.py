@@ -3,6 +3,7 @@ from flask import Flask, render_template, Response
 import cv2
 import face_recognition
 import os
+import time
 from PIL import Image
 import numpy as np
 from camera import Camera
@@ -92,11 +93,19 @@ def gen(camera):
                 third_similarity = 100 / (1 + face_distances[third_best_match_index])
                 third_face_names.append(third_best_name)
                 third_percentage_similarities.append(third_similarity)
-                faces = face_names[0] + ".png"
-                # creating a image object (main image) 
-                im1 = Image.open(os.path.join(img, faces))
-                # save a image using extension
-                im1 = im1.save("static/faces.png")
+                faces = "static/Image/" + face_names[0] + ".png"
+                filename = "static/faces.txt"
+                # storing the recurring similar faces in a file
+                if os.path.exists(filename):
+                    append_write = 'a' # append if already exists
+                else:
+                    append_write = 'w' # make a new file if not
+
+                similar_faces = open(filename,append_write)
+                time.sleep(0.01)
+                similar_faces.write(faces + '\n')
+                similar_faces.close()
+                    
                 # Display the results
                 for (
                     (top, right, bottom, left),
@@ -160,7 +169,9 @@ def gen(camera):
 @app.route("/")
 def index():
     files = [os.path.join(img, name) for name in os.listdir(img)]
-    return render_template("index.html", images=files)
+    with open("static/faces.txt", "r") as file:
+        last_line = file.readlines()[-1]
+    return render_template("index.html", images=files, last=last_line)
 
 @app.route("/video_feed")
 def video_feed():
