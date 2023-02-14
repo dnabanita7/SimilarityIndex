@@ -1,0 +1,4 @@
+AUTHORS
+ChangeLog
+*.pyc
+__pycache__/
