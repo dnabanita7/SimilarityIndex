@@ -102,7 +102,6 @@ def gen(camera):
                     append_write = 'w' # make a new file if not
 
                 similar_faces = open(filename,append_write)
-                time.sleep(0.01)
                 similar_faces.write(faces + '\n')
                 similar_faces.close()
                     
@@ -169,9 +168,11 @@ def gen(camera):
 @app.route("/")
 def index():
     files = [os.path.join(img, name) for name in os.listdir(img)]
-    with open("static/faces.txt", "r") as file:
-        last_line = file.readlines()[-1]
-    return render_template("index.html", images=files, last=last_line)
+    if os.path.exists("static/faces.txt"):
+        with open("static/faces.txt", "r") as file:
+            last_line = file.readlines()[-1]
+        return render_template("index.html", images=files, last=last_line)
+    return render_template("index.html", images=files)
 
 @app.route("/video_feed")
 def video_feed():
