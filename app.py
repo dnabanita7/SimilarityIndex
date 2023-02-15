@@ -169,11 +169,19 @@ def gen(camera):
 def index():
     images = [os.path.join(img, name) for name in os.listdir(img)]
     names = open("static/names.txt").readlines()
+    family_name = []
+    first_name = []
+    for name in names:
+        name = name[0:-1]
+        family, first = name.split(":")
+        family_name.append(family)
+        first_name.append(first)
+
     if os.path.exists("static/faces.txt"):
         with open("static/faces.txt", "r") as file:
             last_line = file.readlines()[-1]
-        return render_template("index.html", images=images, names=names, last=last_line)
-    return render_template("index.html", images=images, names=names)
+        return render_template("index.html", images=zip(images, family_name, first_name), last=last_line)
+    return render_template("index.html", images=zip(images, family_name, first_name))
 
 @app.route("/video_feed")
 def video_feed():
