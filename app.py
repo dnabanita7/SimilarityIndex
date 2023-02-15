@@ -167,12 +167,13 @@ def gen(camera):
 
 @app.route("/")
 def index():
-    files = [os.path.join(img, name) for name in os.listdir(img)]
+    images = [os.path.join(img, name) for name in os.listdir(img)]
+    names = open("static/names.txt").readlines()
     if os.path.exists("static/faces.txt"):
         with open("static/faces.txt", "r") as file:
             last_line = file.readlines()[-1]
-        return render_template("index.html", images=files, last=last_line)
-    return render_template("index.html", images=files)
+        return render_template("index.html", images=images, names=names, last=last_line)
+    return render_template("index.html", images=images, names=names)
 
 @app.route("/video_feed")
 def video_feed():
