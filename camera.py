@@ -14,10 +14,21 @@ class Camera(BaseCamera):
         camera = cv2.VideoCapture(0)
         if not camera.isOpened():
             raise RuntimeError('Could not start camera.')
+        model = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
         while True:
             # read current frame
             _, img = camera.read()
+            face  = model.detectMultiScale(img)
+
+            if len(face) == 0:
+                pass
+            else:
+                x1 = face[0][0]
+                y1 = face[0][1]
+                x2 = face[0][2] + x1
+                y2 = face[0][3] + y1 
+                crop_img = img[y1:y2 , x1:x2]
 
             # encode as a jpeg image and return it
-            yield cv2.imencode('.jpg', img)[1].tobytes()
+            yield cv2.imencode('.jpg', crop_img)[1].tobytes()
