@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from flask import Flask, render_template, Response
+from flask import Flask, render_template, Response, send_file
 import cv2
 import face_recognition
 import os
@@ -10,7 +10,6 @@ from camera import Camera
 
 app = Flask(__name__)
 
-# Load a second sample picture and learn how to recognize it.
 students_face_encodings = []
 for i in range(43):
     content = face_recognition.load_image_file(
@@ -22,150 +21,104 @@ for i in range(43):
 # Create arrays of known face encodings and their names
 students_names = ["students" + str(i).zfill(2) for i in range(43)]
 # Initialize some variables
-
 face_locations = []
 face_encodings = []
+student_match = ""
 
-faces = ""
-process_this_frame = True
 img = os.path.join('static', 'Image')
 
+def find_match(student_face_encodings, face_encoding, face_distances, matches, position):
+    match_index = np.argmin(face_distances)
+    if (position != 0):
+        face_distances = np.delete(face_distances, match_index)
+        match_index = np.argmin(face_distances)
+
+    name = students_names[match_index]
+    similarity = 100 / (1 + face_distances[match_index])
+    matches[position] = {"name": name, "similarity": similarity}
+    return matches, face_distances
 
 def gen(camera):
+    process_this_frame = False
     while True:
+        process_this_frame = True if process_this_frame == False else False
         frame = camera.get_frame()
-         # Resize frame of video to 1/4 size for faster face recognition processing
-        frame = cv2.imdecode(np.frombuffer(frame, np.uint8), -1)
-     
-        # Resize frame of video to 1/4 size for faster face recognition processing
 
+        frame = cv2.imdecode(np.frombuffer(frame, np.uint8), -1)
+
+        # Resize frame of video to 1/4 size for faster face recognition processing
         small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
 
         # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
-
         rgb_small_frame = small_frame[:, :, ::-1]
 
         # Only process every other frame of video to save time
-
         if process_this_frame:
-
             # Find all the faces and face encodings in the current frame of video
 
-            global face_locations
             face_locations = face_recognition.face_locations(rgb_small_frame)
-            global face_encodings
             face_encodings = face_recognition.face_encodings(
                 rgb_small_frame, face_locations
             )
 
-            face_names = []
-            percentage_similarities = []
-            second_face_names = []
-            second_percentage_similarities = []
-            third_face_names = []
-            third_percentage_similarities = []
+            matches = {}
+
             for face_encoding in face_encodings:
-
-                # See if the face is a match for the known face(s)
-
-                matches = face_recognition.compare_faces(
-                    students_face_encodings, face_encoding
-                )
-                name = "Unknown"
-
-                # Or instead, use the known face with the smallest distance to the new face
-
                 face_distances = face_recognition.face_distance(
                     students_face_encodings, face_encoding
                 )
-                best_match_index = np.argmin(face_distances)
-                name = students_names[best_match_index]
-                similarity = 100 / (1 + face_distances[best_match_index])
-                face_names.append(name)
-                percentage_similarities.append(similarity)
-                # add the second face
-                face_distances = np.delete(face_distances, best_match_index)
-                second_best_match_index = np.argmin(face_distances)
-                second_best_name = students_names[second_best_match_index]
-                second_similarity = 100 / (1 + face_distances[second_best_match_index])
-                second_face_names.append(second_best_name)
-                second_percentage_similarities.append(second_similarity)
-                # add the third face
-                face_distances = np.delete(face_distances, second_best_match_index)
-                third_best_match_index = np.argmin(face_distances)
-                third_best_name = students_names[third_best_match_index]
-                third_similarity = 100 / (1 + face_distances[third_best_match_index])
-                third_face_names.append(third_best_name)
-                third_percentage_similarities.append(third_similarity)
-                faces = "static/Image/" + face_names[0] + ".png"
-                filename = "static/faces.txt"
-                # storing the recurring similar faces in a file
-                if os.path.exists(filename):
-                    append_write = 'a' # append if already exists
-                else:
-                    append_write = 'w' # make a new file if not
+                matches,face_distances = find_match(student_face_encodings, face_encoding, face_distances, matches, 0)
+                matches,face_distances = find_match(student_face_encodings, face_encoding, face_distances, matches, 1)
+                matches,face_distances = find_match(student_face_encodings, face_encoding, face_distances, matches, 2)
 
-                similar_faces = open(filename,append_write)
-                similar_faces.write(faces + '\n')
-                similar_faces.close()
-                    
-                # Display the results
-                for (
-                    (top, right, bottom, left),
-                    name,
-                    second_name,
-                    third_name,
-                    percent,
-                    second_percent,
-                    third_percent,
-                ) in zip(
-                    face_locations,
-                    face_names,
-                    second_face_names,
-                    third_face_names,
-                    percentage_similarities,
-                    second_percentage_similarities,
-                    third_percentage_similarities,
-                ):
-                    text2 = second_name + " with " + str(round(second_percent, 2)) + "%"
-                    text3 = third_name + " with " + str(round(third_percent, 2)) + "%"
-                    # Scale back up face locations since the frame we detected in was scaled to 1/4 size
-                    top *= 4
-                    right *= 4
-                    bottom *= 4
-                    left *= 4
+                top, right, bottom, left = face_locations[0]
+                top *= 4
+                right *= 4
+                bottom *= 4
+                left *= 4
 
-                    # Draw a box around the face
-                    cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
+                font = cv2.FONT_HERSHEY_DUPLEX
+                text = matches[0]["name"] + " with " + str(round(matches[0]["similarity"], 2)) + "%"
+                text2 = matches[1]["name"] + " with " + str(round(matches[1]["similarity"], 2)) + "%"
+                text3 = matches[2]["name"] + " with " + str(round(matches[2]["similarity"], 2)) + "%"
 
-                    # Draw a label with a name below the face
-                    cv2.rectangle(
-                        frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED
-                    )
-                    font = cv2.FONT_HERSHEY_DUPLEX
-                    text = name + " with " + str(round(percent, 2)) + "%"
-                    cv2.putText(
-                        frame, text, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1
-                    )
-                    cv2.putText(
-                        frame,
-                        text2,
-                        (left + 6, bottom + 15),
-                        cv2.FONT_HERSHEY_DUPLEX,
-                        0.5,
-                        (0xFF, 0xFF, 0),
-                        1,
-                    )
-                    cv2.putText(
-                        frame,
-                        text3,
-                        (left + 6, bottom + 30),
-                        cv2.FONT_HERSHEY_DUPLEX,
-                        0.5,
-                        (0xFF, 0xFF, 0),
-                        1,
-                    )
-            
+                # Draw a box around the face
+                cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
+
+                # Draw a label with a name below the face
+                cv2.rectangle(
+                    frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED
+                )
+
+                cv2.putText(
+                    frame, text, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1
+                )
+
+                cv2.putText(
+                    frame,
+                    text2,
+                    (left + 6, bottom + 15),
+                    cv2.FONT_HERSHEY_DUPLEX,
+                    0.5,
+                    (0xFF, 0xFF, 0),
+                    1,
+                )
+
+                cv2.putText(
+                    frame,
+                    text3,
+                    (left + 6, bottom + 30),
+                    cv2.FONT_HERSHEY_DUPLEX,
+                    0.5,
+                    (0xFF, 0xFF, 0),
+                    1,
+                )
+                student_match = f"static/Image/{matches[0]['name']}.png"
+
+                f = open('static/faces.txt', 'w')
+                f.write(student_match)
+                cv2.imwrite('static/match.png', cv2.imread(student_match))
+
         frame = cv2.imencode('.jpg', frame)[1].tobytes()
         yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
@@ -180,25 +133,27 @@ def index():
         family, first = name.split(":")
         family_name.append(family)
         first_name.append(first)
-    if not face_encodings:
-        if os.path.exists("static/faces.txt"):
-            os.remove("static/faces.txt")
 
-    if os.path.exists("static/faces.txt"):
-        with open("static/faces.txt", "r") as file:
-            last_line = file.readlines()[-1]
-        student_number = int(last_line[-6:-5])
-        last_family_name = family_name[student_number]
-        last_first_name = first_name[student_number]
-        return render_template("index.html", images=zip(images, family_name, first_name), last=last_line, family=last_family_name, first=last_first_name)
-    return render_template("index.html", images=zip(images, family_name, first_name))
+    return render_template("index.html", images=zip(images, family_name, first_name), last=student_match)
 
 @app.route("/video_feed")
 def video_feed():
     return Response(gen(Camera()), mimetype="multipart/x-mixed-replace; boundary=frame")
 
-    #return Response(gen_frames(), mimetype="multipart/x-mixed-replace; boundary=frame")
+def gen_student():
+    while True:
+        f = open("static/faces.txt", 'r')
+        student = f.read()
+        if len(student) >= 2:
+            image = cv2.imread(student, flags=cv2.IMREAD_COLOR)
+            frame = cv2.imencode('.png', image)[1].tobytes()
+            yield (b'--frame\r\n' b'Content-Type: image/png\r\n\r\n' + frame + b'\r\n')
+        yield (b'')
+
+@app.route('/image_feed')
+def image_feed():
+    return Response(gen_student(), mimetype="multipart/x-mixed-replace; boundary=frame")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
-
