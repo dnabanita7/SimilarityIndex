@@ -180,7 +180,10 @@ def index():
     if os.path.exists("static/faces.txt"):
         with open("static/faces.txt", "r") as file:
             last_line = file.readlines()[-1]
-        return render_template("index.html", images=zip(images, family_name, first_name), last=last_line)
+        student_number = int(last_line[-6:-5])
+        last_family_name = family_name[student_number]
+        last_first_name = first_name[student_number]
+        return render_template("index.html", images=zip(images, family_name, first_name), last=last_line, family=last_family_name, first=last_first_name)
     return render_template("index.html", images=zip(images, family_name, first_name))
 
 @app.route("/video_feed")
