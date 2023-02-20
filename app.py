@@ -22,8 +22,10 @@ for i in range(43):
 # Create arrays of known face encodings and their names
 students_names = ["students" + str(i).zfill(2) for i in range(43)]
 # Initialize some variables
+
 face_locations = []
 face_encodings = []
+
 faces = ""
 process_this_frame = True
 img = os.path.join('static', 'Image')
@@ -49,7 +51,9 @@ def gen(camera):
 
             # Find all the faces and face encodings in the current frame of video
 
+            global face_locations
             face_locations = face_recognition.face_locations(rgb_small_frame)
+            global face_encodings
             face_encodings = face_recognition.face_encodings(
                 rgb_small_frame, face_locations
             )
@@ -176,6 +180,9 @@ def index():
         family, first = name.split(":")
         family_name.append(family)
         first_name.append(first)
+    if not face_encodings:
+        if os.path.exists("static/faces.txt"):
+            os.remove("static/faces.txt")
 
     if os.path.exists("static/faces.txt"):
         with open("static/faces.txt", "r") as file:
