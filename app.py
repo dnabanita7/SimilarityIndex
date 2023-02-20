@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from flask import Flask, render_template, Response, send_file
+from flask import Flask, render_template, Response
 import cv2
 import face_recognition
 import os
