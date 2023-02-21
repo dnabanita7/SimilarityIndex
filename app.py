@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from flask import Flask, render_template, Response
+from flask import Flask, render_template, Response, jsonify
 import cv2
 import face_recognition
 import os
@@ -261,6 +261,14 @@ def gen_student():
             f = cv2.imencode('.jpg', cv2.imread(str(student.strip())))[1].tobytes()
             yield (b'--frame\r\n' b'Content-Type: image/jpg\r\n\r\n' + f + b'\r\n')
 
+def matched_student():
+    while True:
+        f = open("static/faces.txt", "r")
+        student = f.read()
+        if len(student) >= 2:
+            student_number = int(student[-6:-5])
+            matched_name = students_faces[student_number]['first_name'] + " " + students_faces[student_number]['family_name']
+            yield matched_name
 
 @app.route("/")
 def index():
@@ -273,6 +281,10 @@ def video_feed():
 @app.route('/image_feed')
 def image_feed():
     return Response(gen_student(), mimetype="multipart/x-mixed-replace; boundary=frame")
+
+@app.route("/matched_name")
+def matched_name():
+    return Response(matched_student(), mimetype="text/plain")
 
 
 if __name__ == "__main__":
