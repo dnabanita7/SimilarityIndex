@@ -4,27 +4,22 @@
     <title>
         Level Of Confidence
     </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="refresh" content="20; URL=http://127.0.0.1:5000/head" />
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='stylesheets/style.css') }}">
 </head>
 
 <body>
-
     <div class="container" style="display: flex;">
         <div class="container1">
-            <div class="container3" style="margin: 20px 20px 0 0; margin-top: 0; display: flex; flex-wrap: wrap; justify-content: left;">
+            <div class="container3" style="margin: 20px 20px 0 0; margin-top: 0; display: flex; flex: 50%; flex-wrap: wrap; justify-content: left;">
                 {% for student in students_faces %}
                 <div class="container5">
-                    <img src="{{ student['img'] }}" style="margin: 40px 40px 0 0; height: 100px; width: 90px;">
+                    <img src="{{ student['img'] }}" style="margin: 40px 40px 0 0; height: 180px; width: 120px;">
                     <div class="container6" style="text-align: left; font-size: 10.5px;"> {{ student['family_name'] }} </div>
                     <div class="container7" style="text-align: left; font-size: 10.5px;"> {{ student['first_name'] }} </div>
                 </div>
                 {% endfor %}
-            </div>
-        </div>
-        <div class="container2">
-            <div class="container4" style="display: flex; flex-direction: column;">
-                <div class="container8" src="{{ url_for('matched_name') }}" style="text-align: left; font-size: 20px;"></div>
-                <img src= "{{ url_for('image_feed') }}" style="height: 50%; width: 40%; margin: 20px 20px 20px 20px;">
-                <img src="{{ url_for('video_feed') }}">
             </div>
         </div>
     </div>
