@@ -143,10 +143,6 @@ def draw_other_match_info(frame, seen_face, face_position):
     # Fetch the adjusted face position
     top, right, bottom, left = get_face_positions(face_position)
 
-    # Draw a label with a name below the face
-    cv2.rectangle(
-        frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED
-    )
 
     # Write out information about the second closest student
     text2 = get_similarity_string(seen_face['matches'][1]['name'], seen_face['matches'][1]['similarity'])
@@ -182,8 +178,13 @@ def draw_main_match_info(frame, seen_face, face_position):
     # Draw a box around the face
     cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
 
+    # Draw a label with a name below the face
+    cv2.rectangle(
+        frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED
+    )
+
     cv2.putText(
-        frame, text, (left + 6, bottom - 6), FONT, 1.0, (255, 255, 255), 1
+        frame, text, (left + 6, bottom - 6), FONT, 1.0, (0, 0, 0), 1
     )
 
 def gen(camera):
