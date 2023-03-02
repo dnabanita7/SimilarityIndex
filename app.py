@@ -274,6 +274,10 @@ def matched_student():
 def index():
     return render_template("index.html", students_faces=students_faces)
 
+@app.route("/head")
+def head():
+    return render_template("head.html", students_faces=students_faces)
+
 @app.route("/video_feed")
 def video_feed():
     return Response(gen(Camera()), mimetype="multipart/x-mixed-replace; boundary=frame")
