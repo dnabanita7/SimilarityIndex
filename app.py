@@ -291,7 +291,6 @@ def image_feed():
 def matched_name():
     return Response(matched_student(), mimetype="text/plain")
 
-
 if __name__ == "__main__":
     students_faces = setup()
     app.run(debug=True)
