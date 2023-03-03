@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from flask import Flask, render_template, Response, jsonify
+from flask import Flask, render_template, Response, stream_with_context, jsonify
 import cv2
 import face_recognition
 import os
@@ -289,8 +289,7 @@ def image_feed():
 
 @app.route("/matched_name")
 def matched_name():
-    return Response(matched_student(), mimetype="text/plain")
-
+    return Response(stream_with_context(matched_student()), mimetype="text/plain")
 
 if __name__ == "__main__":
     students_faces = setup()
