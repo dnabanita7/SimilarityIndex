@@ -13,8 +13,9 @@
         <div class="container1">
             <div class="container3" style="margin: 200px 20px 0 0; display: flex; flex-wrap: wrap; justify-content: left;">
                 {% for student in students_faces %}
-                <div class="container5">
-                    <img src="{{ student['img'] }}" style="margin: 20px 45px 0 0; height: 115px; width: 90px; opacity: 0.3;">
+                <div class="container5" style="display: block;">
+                    <div class="vertical-bar" style="position:relative; display:block; font-size: 16px; line-height: 10px; border-radius: 20px; background: rgba(0, 0, 0, 0, 1); box-shadow: inset 1px 2px rgba(0, 0, 0, 0.25), 0 1px rgba(255, 255, 255, 0.8); transform: rotate(270deg); transform-origin: right top; width: 115px; top: 40px; left: -25px;"><span style="width:30%; position: relative; display: inline-block; vertical-align: middle; height: 20px; border-radius: 10px 0 0 10px; overflow: hidden; background-color: #f56982; background-size: 70%; background-image: linear-gradient(to bottom, #f2395a, #b90c2b);"></span></div>
+                    <img src="{{ student['img'] }}" style="margin: 20px 40px 0 0; height: 115px; width: 90px; opacity: 0.3;">
                     <div class="container6" style="text-align: left; font-size: 10.5px; margin: 0 20px 0 0;"> {{ student['family_name'] }} </div>
                     <div class="container7" style="text-align: left; font-size: 10.5px;"> {{ student['first_name'] }} </div>
                 </div>
