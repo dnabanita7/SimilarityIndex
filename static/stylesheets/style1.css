@@ -1,0 +1,90 @@
+.container {
+  display: flex;
+}
+
+.container3 {
+  margin: 200px 20px 0 0; 
+  display: flex; 
+  flex-wrap: wrap; 
+  justify-content: left;
+}
+
+.container4 {
+  display: flex; 
+  flex-direction: column; 
+  flex-grow: 4;
+}
+
+.container8 {
+  text-align: left; 
+  font-size: 20px;
+}
+
+.main-images {
+  margin: 20px 40px 0 0; 
+  height: 115px; 
+  width: 90px; 
+  opacity: 0.3;
+}
+
+.image-feed {
+  height: 400px; 
+  width: 300px; 
+  margin: 80px 10px 20px 10px;
+}
+
+.video-feed {
+  height: 400px; 
+  width: 300px; 
+  margin: 0 0 10px 10px;
+}
+
+.vertical-bar {
+  position:relative; 
+  display:block; 
+  font-size: 16px; 
+  line-height: 10px; 
+  border-radius: 20px; 
+  background: rgba(0, 0, 0, 0, 1); 
+  box-shadow: inset 1px 2px rgba(0, 0, 0, 0.25), 0 1px rgba(255, 255, 255, 0.8); 
+  transform: rotate(270deg); 
+  transform-origin: right top; 
+  width: 115px; 
+  top: 40px; 
+  left: -25px;
+}
+
+.pink-bar {
+  width:30%; 
+  position: relative; 
+  display: inline-block; 
+  vertical-align: middle; 
+  height: 20px; 
+  border-radius: 10px 0 0 10px; 
+  overflow: hidden; 
+  background-color: #f56982; 
+  background-size: 70%; 
+  background-image: linear-gradient(to bottom, #f2395a, #b90c2b);
+  animation: pink-bar 6s infinite ease-in;
+}
+
+@keyframes pink-bar {
+  0% {
+  width: 0%;
+  }
+
+  100% {
+    width: 60%;
+    }
+
+}
+
+@media screen and (orientation: portrait) {
+    .container3 {
+      width: 50%;
+    }
+    .container4 {
+        width: 50%;
+        flex-direction: column;
+    }
+  }

@@ -11,6 +11,7 @@ from camera import Camera
 app = Flask(__name__)
 
 FONT = cv2.FONT_HERSHEY_DUPLEX
+process_this_frame = False
 
 def setup():
     """
@@ -255,6 +256,7 @@ def gen(camera):
         yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
 def gen_student():
+    time.sleep(22)
     while True:
         f = open("static/faces.txt", 'r')
         student = f.read()

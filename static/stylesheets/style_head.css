@@ -1,9 +1,0 @@
-@media screen and (orientation: portrait) {
-    .container3 {
-      width: 50%;
-    }
-    .container4 {
-        width: 50%;
-        flex-direction: column;
-    }
-  }
