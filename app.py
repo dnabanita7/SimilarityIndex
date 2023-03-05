@@ -252,11 +252,17 @@ def gen(camera):
                 f = open('static/faces.txt', 'w')
                 f.write(f"{seen_face['matches'][0]['img']}")
 
+                # Write out all the matches to the similarity.txt file
+                file = open('static/similarity.txt', 'a')
+                file.write(f"{seen_face['matches'][0]['img']}\n")
+                file.write(f"{seen_face['matches'][1]['img']}\n")
+                file.write(f"{seen_face['matches'][2]['img']}\n")
+
         frame = cv2.imencode('.jpg', frame)[1].tobytes()
         yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
 def gen_student():
-    time.sleep(22)
+    time.sleep(15)
     while True:
         f = open("static/faces.txt", 'r')
         student = f.read()
@@ -266,12 +272,23 @@ def gen_student():
 
 def matched_student():
     while True:
-        f = open("static/faces.txt", "r")
+        f = open('static/faces.txt', 'r')
         student = f.read()
         if len(student) >= 2:
-            student_number = int(student[-6:-5])
-            matched_name = students_faces[student_number]['first_name'] + " " + students_faces[student_number]['family_name']
+            student_number = int(student[-6:-4])
+            matched_name = students_faces[student_number]['family_name'] + " " + students_faces[student_number]['first_name']
             yield matched_name
+
+def similar_faces():
+    similar_faces = [False for i in range(43)]
+    seen_faces = []
+    with open('static/similarity.txt') as file:
+        seen_faces = file.readlines()
+    similarity_numbers = set([int(seen_face[-7:-5]) for seen_face in seen_faces])
+    for number in similarity_numbers:
+        similar_faces[number] = True
+
+    return similar_faces
 
 @app.route("/")
 def index():
@@ -279,6 +296,10 @@ def index():
 
 @app.route("/head")
 def head():
+    #for i in range(43):
+    #    student = {}
+    #    student["similar_face"] = similar_faces()[i]
+    #    students_faces.append(student)
     return render_template("head.html", students_faces=students_faces)
 
 @app.route("/video_feed")

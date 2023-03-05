@@ -55,7 +55,7 @@
 }
 
 .pink-bar {
-  width:30%; 
+  width: 0%; 
   position: relative; 
   display: inline-block; 
   vertical-align: middle; 
@@ -65,7 +65,7 @@
   background-color: #f56982; 
   background-size: 70%; 
   background-image: linear-gradient(to bottom, #f2395a, #b90c2b);
-  animation: pink-bar 6s infinite ease-in;
+  animation: pink-bar 30s infinite linear;
 }
 
 @keyframes pink-bar {
