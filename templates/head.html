@@ -12,9 +12,11 @@
     <div class="container">
         <div class="container1">
             <div class="container3">
-                {% for student in students_faces %}
+                {% for student, i in students_faces %}
                 <div class="container5">
+                    {% if i %}
                     <div class="vertical-bar"><span class="pink-bar"></span></div>
+                    {% endif %}
                     <img src="{{ student['img'] }}" class="main-images">
                     <div class="container6" style="text-align: left; font-size: 10.5px; margin: 0 20px 0 0;"> {{ student['family_name'] }} </div>
                     <div class="container7" style="text-align: left; font-size: 10.5px;"> {{ student['first_name'] }} </div>

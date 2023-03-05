@@ -300,7 +300,7 @@ def head():
     #    student = {}
     #    student["similar_face"] = similar_faces()[i]
     #    students_faces.append(student)
-    return render_template("head.html", students_faces=students_faces)
+    return render_template("head.html", students_faces=zip(students_faces, similar_faces()))
 
 @app.route("/video_feed")
 def video_feed():
