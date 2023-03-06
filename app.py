@@ -293,11 +293,7 @@ def similar_faces():
 
 @app.route("/")
 def index():
-    return render_template("index.html", students_faces=students_faces)
-
-@app.route("/head")
-def head():
-    return render_template("head.html", students_faces=zip(students_faces, similar_faces()))
+    return render_template("index.html", students_faces=students_faces, similar_faces())
 
 @app.route("/video_feed")
 def video_feed():
