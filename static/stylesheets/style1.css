@@ -65,7 +65,7 @@
   background-color: #f56982; 
   background-size: 70%; 
   background-image: linear-gradient(to bottom, #f2395a, #b90c2b);
-  animation: pink-bar 30s infinite linear;
+  animation: pink-bar 60s infinite linear;
 }
 
 @keyframes pink-bar {

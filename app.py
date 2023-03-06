@@ -282,11 +282,12 @@ def matched_student():
 def similar_faces():
     similar_faces = [False for i in range(43)]
     seen_faces = []
-    with open('static/similarity.txt') as file:
-        seen_faces = file.readlines()
-    similarity_numbers = set([int(seen_face[-7:-5]) for seen_face in seen_faces])
-    for number in similarity_numbers:
-        similar_faces[number] = True
+    if os.path.exists('static/similarity.txt'):
+        with open('static/similarity.txt') as file:
+            seen_faces = file.readlines()
+        similarity_numbers = set([int(seen_face[-7:-5]) for seen_face in seen_faces])
+        for number in similarity_numbers:
+            similar_faces[number] = True
 
     return similar_faces
 
@@ -296,10 +297,6 @@ def index():
 
 @app.route("/head")
 def head():
-    #for i in range(43):
-    #    student = {}
-    #    student["similar_face"] = similar_faces()[i]
-    #    students_faces.append(student)
     return render_template("head.html", students_faces=zip(students_faces, similar_faces()))
 
 @app.route("/video_feed")
