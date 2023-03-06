@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>
+        Level Of Confidence
+    </title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='stylesheets/style1.css') }}">
+</head>
+
+<body>
+    
+    <div class="container">
+        <div class="container1">
+            <div class="container3">
+                {% for student, i in students_faces %}
+                <div class="container5">
+                    {% if i %}
+                    <div class="vertical-bar"><span class="pink-bar"></span></div>
+                    {% endif %}
+                    <img src="{{ student['img'] }}" class="main-images">
+                    <div class="container6" style="text-align: left; font-size: 10.5px; margin: 0 20px 0 0;"> {{ student['family_name'] }} </div>
+                    <div class="container7" style="text-align: left; font-size: 10.5px;"> {{ student['first_name'] }} </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="container2">
+            <div class="container4">
+                <div class="container8" src="{{ url_for('matched_name') }}"></div>
+                <img src= "{{ url_for('image_feed') }}" class="image-feed">
+                <img src="{{ url_for('video_feed') }}" class="video-feed">
+            </div>
+        </div>
+    </div>
+
+
+</body>
+
+
+</html>

@@ -1,5 +1,6 @@
 #!/usr/bin/python
 from flask import Flask, render_template, Response, jsonify, request
+
 import cv2
 import json
 import face_recognition
@@ -55,10 +56,12 @@ def find_match(face):
     This function then deletes that match from the available matches for the
     passed face. So if called twice in a row it will be finding first the
     best match and then the second best match.
+
     Parameters
     ----------
     face : dict
     The face we're finding a match for
+
     Returns
     -------
     dict
@@ -79,29 +82,35 @@ def get_similarity_string(student_name, similarity_percentage):
     """
     Returns the string we want to display about how similar someone is to
     the student
+
     Parameters
     ----------
     student_name : string
     The name of the student we've matched to
     similarity_percentage: string
     The amount of similarity we share with the student
+
     Returns
     -------
     String
         To be displayed on the frontend
+
     """
     return f"{student_name} with {str(round(similarity_percentage, 2))} %"
 
 def get_face_positions(face_position):
     """
     Returns the adjusted top,right,bottom,left positions
+
     Parameters
     ----------
     face_position : tuple
     The original positions of the face
+
     Returns
     -------
     tuple
+
     """
     top, right, bottom, left = face_position
     top *= 4
@@ -113,14 +122,17 @@ def get_face_positions(face_position):
 def draw_other_match_info(frame, seen_face, face_position):
     """
     Draws information about the second and third closest student on the screen.
+
     Parameters
     ----------
     frame : image data
     seen_face : dict
     face_position: tuple
     The name of the student we've matched to
+    
     similarity_percentage: string
     The amount of similarity we share with the student
+
     Returns
     -------
     String
@@ -168,7 +180,6 @@ def draw_main_match_info(frame, seen_face, face_position):
     cv2.rectangle(
         frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED
     )
-
     cv2.putText(
         frame, text, (left + 6, bottom - 6), FONT, 1.0, (0, 0, 0), 1
     )
@@ -262,6 +273,7 @@ def matched_student():
         matched_name = students_faces[student_number]['family_name'] + " " + students_faces[student_number]['first_name']
         return matched_name
 
+
 def similar_faces():
     similar_faces = [False for i in range(43)]
     seen_faces = []
@@ -270,6 +282,7 @@ def similar_faces():
     similarity_numbers = set([int(seen_face[-7:-5]) for seen_face in seen_faces])
     for number in similarity_numbers:
         similar_faces[number] = True
+
 
     return similar_faces
 
@@ -285,6 +298,10 @@ def matched_students():
         }
 
         return jsonify(data)
+
+@app.route("/head")
+def head():
+    return render_template("head.html", students_faces=zip(students_faces, similar_faces()))
 
 @app.route("/video_feed")
 def video_feed():
