@@ -5,26 +5,60 @@
         Level Of Confidence
     </title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="refresh" content="15; URL=http://127.0.0.1:5000/head" />
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='stylesheets/style.css') }}">
 </head>
 
-<body>
-    <div class="container" style="display: flex;">
-        <div class="container1">
-            <div class="container3" style="margin: 20px 20px 0 0; margin-top: 0; display: flex; flex: 50%; flex-wrap: wrap; justify-content: left;">
-                {% for student in students_faces %}
-                <div class="container5">
-                    <img src="{{ student['img'] }}" style="margin: 40px 40px 0 0; height: 180px; width: 120px;">
-                    <div class="container6" style="text-align: left; font-size: 10.5px; word-wrap: break-word;"> {{ student['family_name'] }} </div>
-                    <div class="container7" style="text-align: left; font-size: 10.5px; word-wrap: break-word;"> {{ student['first_name'] }} </div>
-                </div>
-                {% endfor %}
+<body  onload="animate()" >
+    <div class="container"style="display: flex;">
+        <div class="container1"  id="students">
+          <div class="container3">
+              {% for student, i in students_faces %}
+              <div class="container5">
+                  {% if i %}
+                  <div class="vertical-bar"><span class="pink-bar"></span></div>
+                  {% endif %}
+                  <img src="{{ student['img'] }}" class="main-images">
+                  <div class="container6" style="text-align: left; font-size: 10.5px; margin: 0 20px 0 0;"> {{ student['family_name'] }} </div>
+                  <div class="container7" style="text-align: left; font-size: 10.5px;"> {{ student['first_name'] }} </div>
+              </div>
+              {% endfor %}
+          </div>
+        </div>
+        <div class="container2" id="matching" style="visibility:hidden">
+            <div class="container4">
+                <div id="matchName" >  </div>
+                <img src= "{{ url_for('image_feed') }}" class="image-feed">
+                <img src="{{ url_for('video_feed') }}" class="video-feed">
             </div>
         </div>
     </div>
 
+    <script>
+      function animate(){
+        document.getElementById('students').style.animation="zoom-in-zoom-out 1s ease infinite";
+        document.getElementById('students').style.animationDuration = '5s';
+        console.log(document.getElementById('students'))
+        setTimeout(
+        function() {
+          document.getElementById('students').style.animation="";
+          document.getElementById('matching').style.visibility="visible"
+        }, 5000);
+      }
 
+      var t=setInterval(getName,10);
+
+
+      function getName() {
+          const url = 'http://localhost:5000/matched_student'
+          fetch(url)
+          .then(response => response.json())
+          .then(json => {
+              console.log(json);
+              document.getElementById("matchName").innerHTML = json.name
+          })
+      }
+
+    </script>
 </body>
 
 
