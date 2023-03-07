@@ -1,6 +1,8 @@
 #!/usr/bin/python
-from flask import Flask, render_template, Response, jsonify
+from flask import Flask, render_template, Response, jsonify, request
+
 import cv2
+import json
 import face_recognition
 import os
 import time
@@ -16,13 +18,10 @@ process_this_frame = False
 def setup():
     """
     Creates student_faces a list that contains a json object for each student.
-
     This object contains the student's name, image and facial encodings.
-
     Parameters
     ----------
     None
-
     Returns
     -------
     list
@@ -54,7 +53,6 @@ def setup():
 def find_match(face):
     """
     Finds the match for the passed face
-
     This function then deletes that match from the available matches for the
     passed face. So if called twice in a row it will be finding first the
     best match and then the second best match.
@@ -89,7 +87,6 @@ def get_similarity_string(student_name, similarity_percentage):
     ----------
     student_name : string
     The name of the student we've matched to
-
     similarity_percentage: string
     The amount of similarity we share with the student
 
@@ -132,7 +129,7 @@ def draw_other_match_info(frame, seen_face, face_position):
     seen_face : dict
     face_position: tuple
     The name of the student we've matched to
-
+    
     similarity_percentage: string
     The amount of similarity we share with the student
 
@@ -183,7 +180,6 @@ def draw_main_match_info(frame, seen_face, face_position):
     cv2.rectangle(
         frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED
     )
-
     cv2.putText(
         frame, text, (left + 6, bottom - 6), FONT, 1.0, (0, 0, 0), 1
     )
@@ -262,7 +258,6 @@ def gen(camera):
         yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
 def gen_student():
-    time.sleep(15)
     while True:
         f = open("static/faces.txt", 'r')
         student = f.read()
@@ -271,29 +266,38 @@ def gen_student():
             yield (b'--frame\r\n' b'Content-Type: image/jpg\r\n\r\n' + f + b'\r\n')
 
 def matched_student():
-    while True:
-        f = open('static/faces.txt', 'r')
-        student = f.read()
-        if len(student) >= 2:
-            student_number = int(student[-6:-4])
-            matched_name = students_faces[student_number]['family_name'] + " " + students_faces[student_number]['first_name']
-            yield matched_name
+    f = open('static/faces.txt', 'r')
+    student = f.read()
+    if len(student) >= 2:
+        student_number = int(student[-6:-4])
+        matched_name = students_faces[student_number]['family_name'] + " " + students_faces[student_number]['first_name']
+        return matched_name
+
 
 def similar_faces():
     similar_faces = [False for i in range(43)]
     seen_faces = []
-    if os.path.exists('static/similarity.txt'):
-        with open('static/similarity.txt') as file:
-            seen_faces = file.readlines()
-        similarity_numbers = set([int(seen_face[-7:-5]) for seen_face in seen_faces])
-        for number in similarity_numbers:
-            similar_faces[number] = True
+    with open('static/similarity.txt') as file:
+        seen_faces = file.readlines()
+    similarity_numbers = set([int(seen_face[-7:-5]) for seen_face in seen_faces])
+    for number in similarity_numbers:
+        similar_faces[number] = True
+
 
     return similar_faces
 
 @app.route("/")
 def index():
-    return render_template("index.html", students_faces=students_faces)
+    return render_template("index.html", students_faces=zip(students_faces, similar_faces()))
+
+@app.route("/matched_student", methods = ['GET'])
+def matched_students():
+    if(request.method == 'GET'):
+        data = {
+            "name" : matched_student()
+        }
+
+        return jsonify(data)
 
 @app.route("/head")
 def head():
@@ -306,10 +310,6 @@ def video_feed():
 @app.route('/image_feed')
 def image_feed():
     return Response(gen_student(), mimetype="multipart/x-mixed-replace; boundary=frame")
-
-@app.route("/matched_name")
-def matched_name():
-    return Response(matched_student(), mimetype="text/plain")
 
 if __name__ == "__main__":
     students_faces = setup()
